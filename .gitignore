@@ -1,0 +1,51 @@
+# Virtual Environment
+venv/
+.env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# VS Code
+.vscode/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Streamlit
+.streamlit/
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# HuggingFace cache
+.cache/
+huggingface/
+
+# PyTorch
+*.pt
+*.bin
+
+# Build files
+build/
+dist/
+*.egg-info/
+
+# Temporary files
+temp/
+tmp/
+
+# SQLite DB
+*.db
+
+# LangChain
+langchain.db

@@ -1,0 +1,18 @@
+{
+    "name": null,
+    "input_variables": [
+        "length_input",
+        "paper_input",
+        "question",
+        "style_input"
+    ],
+    "optional_variables": [],
+    "output_parser": null,
+    "partial_variables": {},
+    "metadata": null,
+    "tags": null,
+    "template": "\nYou are a highly knowledgeable and professional expert in the field of {paper_input}.\n\nYour task is to answer the user's question accurately, clearly, and in a {style_input} style.\nThe response should be {length_input} in length.\n\nGuidelines:\n- Provide factually correct and relevant information.\n- Use simple explanations when needed.\n- Maintain clarity and structure.\n- Include examples or key points if appropriate.\n- Avoid unnecessary repetition.\n- If the question is technical, explain concepts step-by-step.\n\nUser Question:\n{question}\nAnswer only. Do not evaluate or comment on your own answer.\n",
+    "template_format": "f-string",
+    "validate_template": false,
+    "_type": "prompt"
+}
