@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aura AI | The Future of Intelligent Workspaces</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#030014',
+                        accent: {
+                            purple: '#7c3aed',
+                            blue: '#3b82f6',
+                            cyan: '#06b6d4'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'gradient-x': 'gradient-x 15s ease infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        'gradient-x': {
+                            '0%, 100%': { 'background-size': '200% 200%', 'background-position': 'left center' },
+                            '50%': { 'background-size': '200% 200%', 'background-position': 'right center' },
+                        },
+                        'float': {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #030014;
+            color: #fff;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Custom Cursor */
+        #cursor-glow {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, rgba(3, 0, 20, 0) 70%);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: screen;
+            transition: width 0.3s, height 0.3s;
+        }
+
+        #cursor-dot {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s;
+        }
+
+        /* Noise Texture Overlay */
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 50;
+        }
+
+        /* Background Grid */
+        .bg-grid {
+            background-image: linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-dark {
+            background: rgba(3, 0, 20, 0.7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .text-gradient {
+            background: linear-gradient(to right, #fff, #a78bfa, #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .magnetic-wrap {
+            display: inline-block;
+        }
+
+        /* Hide scrollbar */
+        ::-webkit-scrollbar { width: 0px; }
+    </style>
+</head>
+<body class="antialiased font-sans">
+    <div class="noise"></div>
+    <div id="cursor-glow"></div>
+    <div id="cursor-dot"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-500 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between glass px-6 py-3 rounded-full">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-tr from-accent-purple to-accent-blue rounded-lg flex items-center justify-center">
+                    <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tighter">AURA</span>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#features" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Features</a>
+                <a href="#services" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Services</a>
+                <a href="#about" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">About</a>
+                <a href="#pricing" class="text-sm font-medium text-gray-400 hover:text-white transition-colors">Pricing</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button class="hidden sm:block text-sm font-medium text-gray-400 hover:text-white">Login</button>
+                <button class="magnetic-wrap px-6 py-2 bg-white text-dark rounded-full text-sm font-bold hover:bg-gray-200 transition-all active:scale-95">
+                    Join Waitlist
+                </button>
+                <button class="md:hidden text-white" id="menu-btn">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <div class="absolute inset-0 bg-grid pointer-events-none"></div>
+        
+        <!-- Animated Background Orbs -->
+        <div class="absolute top-1/4 -left-20 w-96 h-96 bg-accent-purple/20 rounded-full blur-[120px] animate-float"></div>
+        <div class="absolute bottom-1/4 -right-20 w-96 h-96 bg-accent-blue/20 rounded-full blur-[120px] animate-float" style="animation-delay: -3s;"></div>
+
+        <div class="container mx-auto px-6 relative z-10 text-center">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 glass mb-8 fade-up">
+                <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-cyan opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-accent-cyan"></span>
+                </span>
+                <span class="text-xs font-medium text-gray-300 tracking-wide uppercase">New: Aura v2.0 is live</span>
+            </div>
+            
+            <h1 class="text-5xl md:text-8xl font-extrabold tracking-tight mb-8 leading-[1.1] fade-up">
+                Design the <span class="text-gradient">Future</span> <br> of Intelligence.
+            </h1>
+            
+            <p class="max-w-2xl mx-auto text-lg md:text-xl text-gray-400 mb-12 fade-up leading-relaxed">
+                Elevate your productivity with our next-generation AI workspace. Minimalist aesthetics, professional performance, and cinematic experiences.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-6 fade-up">
+                <button class="magnetic-wrap group relative px-8 py-4 bg-gradient-to-r from-accent-purple to-accent-blue rounded-full font-bold text-lg overflow-hidden transition-all hover:shadow-[0_0_40px_rgba(124,58,237,0.3)]">
+                    <span class="relative z-10 flex items-center gap-2">
+                        Get Started Free <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                    </span>
+                </button>
+                <button class="magnetic-wrap px-8 py-4 glass rounded-full font-bold text-lg hover:bg-white/5 transition-all">
+                    View Demo
+                </button>
+            </div>
+
+            <!-- Dashboard Preview -->
+            <div class="mt-24 relative max-w-5xl mx-auto fade-up">
+                <div class="absolute inset-0 bg-gradient-to-t from-dark via-transparent to-transparent z-10"></div>
+                <div class="rounded-2xl p-1 bg-gradient-to-tr from-white/10 to-transparent border border-white/5 shadow-2xl overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop" alt="Dashboard" class="rounded-xl opacity-80">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-32 relative">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-end justify-between mb-20 gap-8">
+                <div class="max-w-2xl">
+                    <h2 class="text-3xl md:text-5xl font-bold mb-6 reveal-text">Unparalleled Performance. <br> Elegant Simplicity.</h2>
+                    <p class="text-gray-400 text-lg reveal-text">We've built the most intuitive tools for modern teams, focusing on the details that matter.</p>
+                </div>
+                <div class="reveal-text">
+                    <a href="#" class="group flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-accent-cyan">
+                        Explore all features <i data-lucide="chevron-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="feature-card glass p-8 rounded-3xl group hover:border-accent-purple/50 transition-all duration-500">
+                    <div class="w-12 h-12 bg-accent-purple/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="layers" class="w-6 h-6 text-accent-purple"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Neural Workspaces</h3>
+                    <p class="text-gray-400 leading-relaxed mb-6">Adaptive interfaces that learn from your workflow to provide the most relevant tools at the right time.</p>
+                    <div class="h-1 w-0 bg-accent-purple group-hover:w-full transition-all duration-500"></div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card glass p-8 rounded-3xl group hover:border-accent-blue/50 transition-all duration-500">
+                    <div class="w-12 h-12 bg-accent-blue/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="cpu" class="w-6 h-6 text-accent-blue"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Real-time Insights</h3>
+                    <p class="text-gray-400 leading-relaxed mb-6">Process massive datasets in seconds with our custom-tuned inference engine optimized for speed.</p>
+                    <div class="h-1 w-0 bg-accent-blue group-hover:w-full transition-all duration-500"></div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card glass p-8 rounded-3xl group hover:border-accent-cyan/50 transition-all duration-500">
+                    <div class="w-12 h-12 bg-accent-cyan/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-accent-cyan"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Enterprise Security</h3>
+                    <p class="text-gray-400 leading-relaxed mb-6">Military-grade encryption and privacy-first architecture ensuring your data remains yours alone.</p>
+                    <div class="h-1 w-0 bg-accent-cyan group-hover:w-full transition-all duration-500"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section (Stats/Metrics) -->
+    <section id="services" class="py-32 bg-white/5">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-12 text-center">
+                <div class="stat-item">
+                    <div class="text-4xl md:text-6xl font-extrabold mb-2 text-gradient counter" data-target="99">0</div>
+                    <div class="text-sm font-bold text-gray-400 uppercase tracking-widest">Accuracy %</div>
+                </div>
+                <div class="stat-item">
+                    <div class="text-4xl md:text-6xl font-extrabold mb-2 text-gradient counter" data-target="150">0</div>
+                    <div class="text-sm font-bold text-gray-400 uppercase tracking-widest">Integrations</div>
+                </div>
+                <div class="stat-item">
+                    <div class="text-4xl md:text-6xl font-extrabold mb-2 text-gradient counter" data-target="24">0</div>
+                    <div class="text-sm font-bold text-gray-400 uppercase tracking-widest">Global Nodes</div>
+                </div>
+                <div class="stat-item">
+                    <div class="text-4xl md:text-6xl font-extrabold mb-2 text-gradient counter" data-target="500">0</div>
+                    <div class="text-sm font-bold text-gray-400 uppercase tracking-widest">M+ Queries</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-32 overflow-hidden">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                <div class="relative reveal-left">
+                    <div class="absolute -top-10 -left-10 w-40 h-40 bg-accent-purple/30 rounded-full blur-[80px]"></div>
+                    <div class="glass p-4 rounded-[40px] relative z-10 rotate-3">
+                        <img src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1974&auto=format&fit=crop" alt="Abstract Art" class="rounded-[30px] shadow-2xl">
+                    </div>
+                </div>
+                <div class="reveal-right">
+                    <h2 class="text-4xl md:text-6xl font-bold mb-8">Crafting the next <br> <span class="text-accent-purple underline decoration-accent-purple/30 underline-offset-8">Standard</span>.</h2>
+                    <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+                        At Aura, we believe that complexity shouldn't sacrifice beauty. Our mission is to bridge the gap between high-performance computing and world-class design.
+                    </p>
+                    <ul class="space-y-4 mb-10">
+                        <li class="flex items-center gap-3">
+                            <i data-lucide="check-circle-2" class="w-6 h-6 text-accent-cyan"></i>
+                            <span class="font-medium">Intuitive Human-AI Interaction</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i data-lucide="check-circle-2" class="w-6 h-6 text-accent-cyan"></i>
+                            <span class="font-medium">Sub-millisecond latency globally</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i data-lucide="check-circle-2" class="w-6 h-6 text-accent-cyan"></i>
+                            <span class="font-medium">Sustainable Infrastructure</span>
+                        </li>
+                    </ul>
+                    <button class="magnetic-wrap px-8 py-4 border border-white/10 glass rounded-full font-bold hover:bg-white/5 transition-all">
+                        Read our Manifesto
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-32">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl md:text-5xl font-bold mb-20 text-center">Loved by Visionaries.</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="glass p-8 rounded-3xl relative">
+                    <i data-lucide="quote" class="absolute top-8 right-8 text-white/10 w-12 h-12"></i>
+                    <p class="text-gray-300 italic mb-8">"Aura changed how our design team interacts with data. It's not just a tool; it's a competitive advantage."</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-accent-purple to-accent-blue"></div>
+                        <div>
+                            <p class="font-bold">Sarah Jenkins</p>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest">Design Lead, Flux</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass p-8 rounded-3xl relative">
+                    <i data-lucide="quote" class="absolute top-8 right-8 text-white/10 w-12 h-12"></i>
+                    <p class="text-gray-300 italic mb-8">"The attention to detail in the UI is unmatched. It feels like software from five years in the future."</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-accent-cyan to-accent-blue"></div>
+                        <div>
+                            <p class="font-bold">Marcus Thorne</p>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest">CTO, Nebula AI</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass p-8 rounded-3xl relative">
+                    <i data-lucide="quote" class="absolute top-8 right-8 text-white/10 w-12 h-12"></i>
+                    <p class="text-gray-300 italic mb-8">"Minimalism at its peak. No clutter, just pure focused intelligence. Exactly what we needed."</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-accent-purple to-accent-cyan"></div>
+                        <div>
+                            <p class="font-bold">Elena Rodriguez</p>
+                            <p class="text-xs text-gray-500 uppercase tracking-widest">Founder, Solas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-32 relative">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-20">
+                <h2 class="text-4xl md:text-6xl font-bold mb-6">Simple, Transparent.</h2>
+                <p class="text-gray-400 max-w-xl mx-auto">Choose the plan that scales with your ambition. No hidden fees, no complexity.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                <!-- Basic -->
+                <div class="glass p-10 rounded-[40px] flex flex-col hover:border-white/20 transition-all group">
+                    <p class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">Starter</p>
+                    <h3 class="text-5xl font-extrabold mb-8">$0<span class="text-lg text-gray-500 font-normal">/mo</span></h3>
+                    <ul class="space-y-5 mb-12 flex-grow">
+                        <li class="flex items-center gap-3 text-gray-400">
+                            <i data-lucide="check" class="w-5 h-5 text-accent-purple"></i> 5 Core Workspaces
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-400">
+                            <i data-lucide="check" class="w-5 h-5 text-accent-purple"></i> Basic Neural Insights
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-400">
+                            <i data-lucide="check" class="w-5 h-5 text-accent-purple"></i> Community Support
+                        </li>
+                    </ul>
+                    <button class="w-full py-4 glass rounded-full font-bold group-hover:bg-white group-hover:text-dark transition-all">Get Started</button>
+                </div>
+
+                <!-- Pro -->
+                <div class="relative p-10 rounded-[40px] flex flex-col bg-gradient-to-b from-accent-purple/20 to-accent-blue/20 border border-accent-purple/50 shadow-[0_0_60px_rgba(124,58,237,0.2)] overflow-hidden">
+                    <div class="absolute top-0 right-0 px-6 py-2 bg-accent-purple text-xs font-bold uppercase tracking-widest rounded-bl-2xl">Popular</div>
+                    <p class="text-sm font-bold uppercase tracking-widest text-accent-purple mb-4">Pro</p>
+                    <h3 class="text-5xl font-extrabold mb-8">$49<span class="text-lg text-gray-500 font-normal">/mo</span></h3>
+                    <ul class="space-y-5 mb-12 flex-grow">
+                        <li class="flex items-center gap-3">
+                            <i data-lucide="check" class="w-5 h-5 text-accent-purple"></i> Unlimited Workspaces
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i data-lucide="check" class="w-5 h-5 text-accent-purple"></i> Advanced Neural Engine
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i data-lucide="check" class="w-5 h-5 text-accent-purple"></i> Priority API Access
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i data-lucide="check" class="w-5 h-5 text-accent-purple"></i> 24/7 Concierge Support
+                        </li>
+                    </ul>
+                    <button class="w-full py-4 bg-white text-dark rounded-full font-bold hover:bg-gray-200 transition-all shadow-xl">Start Pro Trial</button>
+                </div>
+
+                <!-- Enterprise -->
+                <div class="glass p-10 rounded-[40px] flex flex-col hover:border-white/20 transition-all group">
+                    <p class="text-sm font-bold uppercase tracking-widest text-gray-500 mb-4">Custom</p>
+                    <h3 class="text-5xl font-extrabold mb-8">Talk<span class="text-lg text-gray-500 font-normal"></span></h3>
+                    <p class="text-gray-400 mb-8">For global organizations requiring custom infrastructure.</p>
+                    <ul class="space-y-5 mb-12 flex-grow">
+                        <li class="flex items-center gap-3 text-gray-400">
+                            <i data-lucide="check" class="w-5 h-5 text-accent-purple"></i> Custom SLA
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-400">
+                            <i data-lucide="check" class="w-5 h-5 text-accent-purple"></i> On-prem Deployment
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-400">
+                            <i data-lucide="check" class="w-5 h-5 text-accent-purple"></i> Dedicated Engineer
+                        </li>
+                    </ul>
+                    <button class="w-full py-4 glass rounded-full font-bold group-hover:bg-white group-hover:text-dark transition-all">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-32">
+        <div class="container mx-auto px-6 max-w-3xl">
+            <h2 class="text-3xl md:text-5xl font-bold mb-16 text-center">Common Questions.</h2>
+            <div class="space-y-6">
+                <div class="faq-item glass p-6 rounded-2xl cursor-pointer group">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-bold text-lg">How does the Neural Engine work?</h4>
+                        <i data-lucide="plus" class="w-5 h-5 text-gray-500 group-[.active]:rotate-45 transition-transform"></i>
+                    </div>
+                    <div class="faq-answer hidden text-gray-400 leading-relaxed pt-2">
+                        Our Neural Engine uses a distributed inference system that dynamically allocates compute resources based on your task complexity, ensuring zero lag.
+                    </div>
+                </div>
+                <div class="faq-item glass p-6 rounded-2xl cursor-pointer group">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-bold text-lg">Can I migrate from other platforms?</h4>
+                        <i data-lucide="plus" class="w-5 h-5 text-gray-500 group-[.active]:rotate-45 transition-transform"></i>
+                    </div>
+                    <div class="faq-answer hidden text-gray-400 leading-relaxed pt-2">
+                        Yes, we provide one-click migration tools for Notion, Linear, and Slack, ensuring all your data stays perfectly organized.
+                    </div>
+                </div>
+                <div class="faq-item glass p-6 rounded-2xl cursor-pointer group">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-bold text-lg">Is my data encrypted?</h4>
+                        <i data-lucide="plus" class="w-5 h-5 text-gray-500 group-[.active]:rotate-45 transition-transform"></i>
+                    </div>
+                    <div class="faq-answer hidden text-gray-400 leading-relaxed pt-2">
+                        Absolutely. We use AES-256 end-to-end encryption. Even Aura engineers cannot access your private workspaces.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-32">
+        <div class="container mx-auto px-6">
+            <div class="glass p-12 md:p-24 rounded-[60px] text-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-tr from-accent-purple/20 via-transparent to-accent-blue/20 pointer-events-none"></div>
+                
+                <h2 class="text-4xl md:text-7xl font-extrabold mb-10 relative z-10">Ready to enter <br> the <span class="text-gradient">Atmosphere</span>?</h2>
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-6 relative z-10">
+                    <button class="magnetic-wrap px-10 py-5 bg-white text-dark rounded-full font-bold text-xl hover:bg-gray-200 transition-all">
+                        Join the Atmosphere
+                    </button>
+                    <button class="magnetic-wrap px-10 py-5 glass rounded-full font-bold text-xl hover:bg-white/5 transition-all">
+                        Book a Workshop
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-20 border-t border-white/5">
+        <div class="container mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-12 mb-20">
+                <div class="col-span-2">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="w-6 h-6 bg-gradient-to-tr from-accent-purple to-accent-blue rounded flex items-center justify-center">
+                            <i data-lucide="zap" class="w-4 h-4 text-white"></i>
+                        </div>
+                        <span class="text-lg font-bold tracking-tighter uppercase">AURA</span>
+                    </div>
+                    <p class="text-gray-500 max-w-xs mb-8">Revolutionizing how humans interact with machine intelligence through premium design.</p>
+                    <div class="flex items-center gap-4">
+                        <a href="#" class="w-10 h-10 glass rounded-full flex items-center justify-center hover:bg-white/10 transition-all">
+                            <i data-lucide="twitter" class="w-5 h-5 text-gray-400"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 glass rounded-full flex items-center justify-center hover:bg-white/10 transition-all">
+                            <i data-lucide="github" class="w-5 h-5 text-gray-400"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 glass rounded-full flex items-center justify-center hover:bg-white/10 transition-all">
+                            <i data-lucide="linkedin" class="w-5 h-5 text-gray-400"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h5 class="font-bold mb-6 uppercase tracking-widest text-xs text-gray-400">Product</h5>
+                    <ul class="space-y-4 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-white transition-colors">Neural Sync</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Atmosphere</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Aura Labs</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="font-bold mb-6 uppercase tracking-widest text-xs text-gray-400">Resources</h5>
+                    <ul class="space-y-4 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-white transition-colors">Documentation</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">API Status</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Open Source</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="font-bold mb-6 uppercase tracking-widest text-xs text-gray-400">Company</h5>
+                    <ul class="space-y-4 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-white transition-colors">Manifesto</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Privacy</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="font-bold mb-6 uppercase tracking-widest text-xs text-gray-400">Newsletter</h5>
+                    <div class="flex glass rounded-full p-1">
+                        <input type="text" placeholder="Email" class="bg-transparent border-none outline-none text-xs px-4 flex-grow w-24">
+                        <button class="p-2 bg-white rounded-full">
+                            <i data-lucide="chevron-right" class="w-4 h-4 text-dark"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex flex-col md:flex-row items-center justify-between pt-10 border-t border-white/5 gap-4">
+                <p class="text-xs text-gray-600">© 2026 Aura AI Inc. All rights reserved.</p>
+                <div class="flex items-center gap-8 text-xs text-gray-600">
+                    <a href="#" class="hover:text-white transition-colors">Security</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms</a>
+                    <a href="#" class="hover:text-white transition-colors">GDPR</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // GSAP Initialization
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Custom Cursor Logic
+        const cursorGlow = document.getElementById('cursor-glow');
+        const cursorDot = document.getElementById('cursor-dot');
+
+        window.addEventListener('mousemove', (e) => {
+            gsap.to(cursorGlow, {
+                duration: 0.8,
+                x: e.clientX,
+                y: e.clientY,
+                ease: 'power3.out'
+            });
+            gsap.to(cursorDot, {
+                duration: 0.1,
+                x: e.clientX,
+                y: e.clientY
+            });
+        });
+
+        // Hover Effect on Cursor
+        document.querySelectorAll('a, button, .faq-item').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                gsap.to(cursorGlow, { width: 600, height: 600, duration: 0.3 });
+                gsap.to(cursorDot, { scale: 3, duration: 0.3 });
+            });
+            el.addEventListener('mouseleave', () => {
+                gsap.to(cursorGlow, { width: 400, height: 400, duration: 0.3 });
+                gsap.to(cursorDot, { scale: 1, duration: 0.3 });
+            });
+        });
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('glass-dark', 'py-2');
+                navbar.classList.remove('py-4');
+            } else {
+                navbar.classList.remove('glass-dark', 'py-2');
+                navbar.classList.add('py-4');
+            }
+        });
+
+        // Magnetic Button Effect
+        document.querySelectorAll('.magnetic-wrap').forEach(wrap => {
+            wrap.addEventListener('mousemove', (e) => {
+                const rect = wrap.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                gsap.to(wrap, {
+                    x: x * 0.3,
+                    y: y * 0.3,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            });
+
+            wrap.addEventListener('mouseleave', () => {
+                gsap.to(wrap, {
+                    x: 0,
+                    y: 0,
+                    duration: 0.5,
+                    ease: 'elastic.out(1, 0.3)'
+                });
+            });
+        });
+
+        // Scroll Reveal Animations
+        gsap.utils.toArray('.fade-up').forEach((el, i) => {
+            gsap.from(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 90%',
+                },
+                y: 60,
+                opacity: 0,
+                duration: 1,
+                delay: i * 0.1,
+                ease: 'power3.out'
+            });
+        });
+
+        gsap.utils.toArray('.reveal-text').forEach(el => {
+            gsap.from(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 85%',
+                },
+                y: 30,
+                opacity: 0,
+                duration: 1,
+                ease: 'power3.out'
+            });
+        });
+
+        gsap.from('.reveal-left', {
+            scrollTrigger: { trigger: '.reveal-left', start: 'top 80%' },
+            x: -100,
+            opacity: 0,
+            duration: 1.5,
+            ease: 'power4.out'
+        });
+
+        gsap.from('.reveal-right', {
+            scrollTrigger: { trigger: '.reveal-right', start: 'top 80%' },
+            x: 100,
+            opacity: 0,
+            duration: 1.5,
+            ease: 'power4.out'
+        });
+
+        // Counter Animation
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = parseInt(entry.target.getAttribute('data-target'));
+                    const duration = 2000;
+                    let startTime = null;
+
+                    const animate = (timestamp) => {
+                        if (!startTime) startTime = timestamp;
+                        const progress = Math.min((timestamp - startTime) / duration, 1);
+                        entry.target.innerText = Math.floor(progress * target);
+                        if (progress < 1) requestAnimationFrame(animate);
+                        else entry.target.innerText = target + (target > 100 ? 'M+' : '');
+                    };
+
+                    requestAnimationFrame(animate);
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.counter').forEach(counter => counterObserver.observe(counter));
+
+        // FAQ Accordion
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const answer = item.querySelector('.faq-answer');
+                const icon = item.querySelector('i');
+                const isActive = item.classList.contains('active');
+
+                // Close others
+                document.querySelectorAll('.faq-item').forEach(other => {
+                    other.classList.remove('active');
+                    other.querySelector('.faq-answer').style.display = 'none';
+                });
+
+                if (!isActive) {
+                    item.classList.add('active');
+                    answer.style.display = 'block';
+                    gsap.from(answer, { opacity: 0, y: -10, duration: 0.3 });
+                }
+            });
+        });
+
+        // Mobile Menu Logic
+        const menuBtn = document.getElementById('menu-btn');
+        let menuOpen = false;
+        menuBtn.addEventListener('click', () => {
+            // Simple toggle for demo
+            menuOpen = !menuOpen;
+            menuBtn.innerHTML = menuOpen ? '<i data-lucide="x" class="w-6 h-6"></i>' : '<i data-lucide="menu" class="w-6 h-6"></i>';
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

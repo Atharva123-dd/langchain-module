@@ -1,0 +1,12 @@
+LangChain is a framework designed to facilitate the creation of applications using large language models (LLMs). 
+As a framework for language models, LangChain's use-cases overlap largely with those of language models in general, including document analysis and summarization, chatbots, and code analysis.
+
+The LangChain framework is designed around several core modules:
+1. Model I/O: This includes prompt management, prompt optimization, a generic interface for all LLMs, and common utilities for working with LLMs.
+2. Data Connection: This provides building blocks to load, transform, store and query data.
+3. Chains: Chains go beyond a single LLM call and involve sequences of calls (whether to an LLM or a different utility).
+4. Agents: Agents involve an LLM making decisions about which Action to take, taking that Action, seeing an Observation, and repeating that until done.
+5. Memory: Memory refers to persisting state between calls of a chain/agent.
+6. Callbacks: Callbacks allow you to hook into the various stages of your LLM application.
+
+LangChain provides a standard interface for chains, lots of integrations with other tools, and end-to-end chains for common applications.
